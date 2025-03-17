@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pricing Quotation with Discounts, Tiers & Bundle Discount</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 20px auto;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .journey-container {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .journey-container h2 {
+      margin-top: 0;
+    }
+    .module-options {
+      margin: 10px 0;
+    }
+    .module-options label {
+      display: block;
+      margin: 5px 0;
+    }
+    .hidden {
+      display: none;
+    }
+    .btn {
+      background: #007BFF;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+    }
+    table thead {
+      background: #f0f0f0;
+    }
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    /* Right-align numeric columns */
+    .numeric-col {
+      text-align: right;
+    }
+    tfoot td {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Price Quotation</h1>
+<p>
+  Select the journeys (CX, EX, AX) you want to purchase, choose modules, and enter the number of users.  
+  <br />
+  <strong>Discount Tiers (CX & EX):</strong>  
+  <ul>
+    <li>Up to 1000: 0% discount</li>
+    <li>1001–2500: 10% discount</li>
+    <li>2501–5000: 20% discount</li>
+    <li>5001–10000: 30% discount</li>
+    <li>10001–25000: 40% discount</li>
+    <li>25001–50000: 50% discount</li>
+    <li>Above 50000: 60% discount</li>
+  </ul>
+  <strong>AX Tier Pricing:</strong> (₹500,000 minimum commitment)
+  <ul>
+    <li>Up to 1000: ₹500/user</li>
+    <li>1001–2500: ₹450/user</li>
+    <li>2501–5000: ₹400/user</li>
+    <li>5001–10000: ₹350/user</li>
+    <li>10001–25000: ₹300/user</li>
+    <li>Above 25000: ₹300/user</li>
+  </ul>
+  <strong>Bundle Discount:</strong>  
+  <ul>
+    <li>If you buy <em>All Modules</em> for both CX and EX, you get an extra 16.6666% off the combined CX+EX total.</li>
+  </ul>
+  <strong>USD Conversion:</strong> 1 USD = ₹82
+</p>
+
+<form id="pricingForm">
+
+  <!-- CX Journey -->
+  <div class="journey-container">
+    <h2>CX Journey</h2>
+    <label>
+      <input type="checkbox" id="chkCX" />
+      Enable CX
+    </label>
+    <div id="cxDetails" class="hidden">
+      <p>
+        Number of Candidates:
+        <input type="number" id="cxUserCount" min="1" value="1" />
+      </p>
+      <div class="module-options">
+        <label>
+          <input type="checkbox" id="cxAllModules" />
+          Select All Modules
+        </label>
+        <label>
+          <input type="checkbox" name="cxModule" value="Feedback & Action" />
+          Feedback &amp; Action (₹200/user)
+        </label>
+        <label>
+          <input type="checkbox" name="cxModule" value="Ai Assist FAQ" />
+          Ai Assist FAQ (₹400/user)
+        </label>
+        <label>
+          <input type="checkbox" name="cxModule" value="Campaigns" />
+          Campaigns (₹150/user)
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX Journey -->
+  <div class="journey-container">
+    <h2>EX Journey</h2>
+    <label>
+      <input type="checkbox" id="chkEX" />
+      Enable EX
+    </label>
+    <div id="exDetails" class="hidden">
+      <p>
+        Number of Employees:
+        <input type="number" id="exUserCount" min="1" value="1" />
+      </p>
+      <div class="module-options">
+        <label>
+          <input type="checkbox" id="exAllModules" />
+          Select All Modules
+        </label>
+        <label>
+          <input type="checkbox" name="exModule" value="Feedback & Action" />
+          Feedback &amp; Action (₹1500/user)
+        </label>
+        <label>
+          <input type="checkbox" name="exModule" value="Ai Assist FAQ" />
+          Ai Assist FAQ (₹750/user)
+        </label>
+        <label>
+          <input type="checkbox" name="exModule" value="Campaigns" />
+          Campaigns (₹150/user)
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- AX Journey -->
+  <div class="journey-container">
+    <h2>AX Journey</h2>
+    <label>
+      <input type="checkbox" id="chkAX" />
+      Enable AX
+    </label>
+    <div id="axDetails" class="hidden">
+      <p>
+        Number of Alumni:
+        <input type="number" id="axUserCount" min="1" value="1" />
+      </p>
+      <p>
+        <em>AX is offered as a single "All Modules" package only.</em><br />
+        Tier-based per-user cost with ₹500,000 minimum commitment.
+      </p>
+    </div>
+  </div>
+
+  <button type="button" class="btn" onclick="calculatePricing()">Calculate Pricing</button>
+</form>
+
+<!-- Final Quote Table -->
+<table id="quoteTable" class="hidden">
+  <thead>
+    <tr>
+      <th>Journey</th>
+      <th>Module</th>
+      <th class="numeric-col"># of Users</th>
+      <th class="numeric-col">Price (per user)</th>
+      <th>Discount / Tier Info</th>
+      <th class="numeric-col">After Discount (per user)</th>
+      <th class="numeric-col">Investment (₹)</th>
+      <th class="numeric-col">Investment ($)</th>
+    </tr>
+  </thead>
+  <tbody id="quoteBody"></tbody>
+  <tfoot>
+    <tr>
+      <td colspan="6" style="text-align:right;">Total:</td>
+      <td id="totalRs" class="numeric-col">₹0</td>
+      <td id="totalUsd" class="numeric-col">$0</td>
+    </tr>
+  </tfoot>
+</table>
+
+<script>
+// Example per-user pricing in rupees (before discount for CX/EX):
+const pricing = {
+  CX: {
+    "Feedback & Action": 200,
+    "Ai Assist FAQ": 400, // Updated
+    "Campaigns": 150,
+    // "All Modules" = sum of the above
+    "All Modules": 200 + 400 + 150 // = 750
+  },
+  EX: {
+    "Feedback & Action": 1500,
+    "Ai Assist FAQ": 750,
+    "Campaigns": 150,
+    // "All Modules" = sum of the above
+    "All Modules": 1500 + 750 + 150 // = 2400
+  }
+};
+
+// Conversion rate
+const INR_TO_USD = 82; // 1 USD = ₹82
+
+// DISCOUNT TIERS FOR CX/EX (percentage off the total cost):
+function getDiscountRateCXEX(userCount) {
+  if (userCount <= 1000) return 0.0;
+  else if (userCount <= 2500) return 0.10;
+  else if (userCount <= 5000) return 0.20;
+  else if (userCount <= 10000) return 0.30;
+  else if (userCount <= 25000) return 0.40;
+  else if (userCount <= 50000) return 0.50;
+  else return 0.60;
+}
+
+// AX TIER-BASED COST PER USER (with ₹500,000 minimum)
+function getAXRate(userCount) {
+  if (userCount <= 1000) return 500;
+  else if (userCount <= 2500) return 450;
+  else if (userCount <= 5000) return 400;
+  else if (userCount <= 10000) return 350;
+  else if (userCount <= 25000) return 300;
+  else return 300; // or adjust if needed
+}
+
+// Toggle sections
+document.getElementById("chkCX").addEventListener("change", function() {
+  document.getElementById("cxDetails").classList.toggle("hidden", !this.checked);
+});
+document.getElementById("chkEX").addEventListener("change", function() {
+  document.getElementById("exDetails").classList.toggle("hidden", !this.checked);
+});
+document.getElementById("chkAX").addEventListener("change", function() {
+  document.getElementById("axDetails").classList.toggle("hidden", !this.checked);
+});
+
+// If "All Modules" is checked, disable other module checkboxes
+document.getElementById("cxAllModules").addEventListener("change", function() {
+  const cxModuleCbs = document.getElementsByName("cxModule");
+  if (this.checked) {
+    cxModuleCbs.forEach(cb => {
+      cb.checked = false;
+      cb.disabled = true;
+    });
+  } else {
+    cxModuleCbs.forEach(cb => {
+      cb.disabled = false;
+    });
+  }
+});
+document.getElementById("exAllModules").addEventListener("change", function() {
+  const exModuleCbs = document.getElementsByName("exModule");
+  if (this.checked) {
+    exModuleCbs.forEach(cb => {
+      cb.checked = false;
+      cb.disabled = true;
+    });
+  } else {
+    exModuleCbs.forEach(cb => {
+      cb.disabled = false;
+    });
+  }
+});
+
+function calculatePricing() {
+  let quoteRows = [];
+  let grandTotalRs = 0;
+
+  const cxEnabled = document.getElementById("chkCX").checked;
+  const exEnabled = document.getElementById("chkEX").checked;
+  const axEnabled = document.getElementById("chkAX").checked;
+
+  // Track subtotals for CX and EX in case we apply the bundle discount
+  let cxSubtotal = 0;
+  let exSubtotal = 0;
+
+  // ----- CX Journey -----
+  let cxAll = false;
+  if (cxEnabled) {
+    const cxUserCount = parseInt(document.getElementById("cxUserCount").value) || 0;
+    cxAll = document.getElementById("cxAllModules").checked;
+    if (cxUserCount > 0) {
+      if (cxAll) {
+        const basePerUser = pricing.CX["All Modules"];
+        // Apply discount
+        const discountRate = getDiscountRateCXEX(cxUserCount);
+        const costBeforeDiscount = basePerUser * cxUserCount;
+        const discountAmount = costBeforeDiscount * discountRate;
+        const totalRs = costBeforeDiscount - discountAmount;
+
+        grandTotalRs += totalRs;
+        cxSubtotal += totalRs;
+
+        // After discount per user (rounded integer)
+        const adpu = cxUserCount > 0 ? Math.round(totalRs / cxUserCount) : 0;
+
+        quoteRows.push({
+          journey: "CX",
+          module: "All Modules",
+          users: cxUserCount,
+          price: basePerUser,
+          discountInfo: (discountRate * 100).toFixed(0) + "% off",
+          afterDiscountPerUser: adpu,
+          totalRs
+        });
+      } else {
+        const cxModuleCbs = document.getElementsByName("cxModule");
+        let anySelected = false;
+        cxModuleCbs.forEach(cb => {
+          if (cb.checked) {
+            anySelected = true;
+            const basePerUser = pricing.CX[cb.value];
+            // Apply discount
+            const discountRate = getDiscountRateCXEX(cxUserCount);
+            const costBeforeDiscount = basePerUser * cxUserCount;
+            const discountAmount = costBeforeDiscount * discountRate;
+            const totalRs = costBeforeDiscount - discountAmount;
+
+            grandTotalRs += totalRs;
+            cxSubtotal += totalRs;
+
+            const adpu = cxUserCount > 0 ? Math.round(totalRs / cxUserCount) : 0;
+
+            quoteRows.push({
+              journey: "CX",
+              module: cb.value,
+              users: cxUserCount,
+              price: basePerUser,
+              discountInfo: (discountRate * 100).toFixed(0) + "% off",
+              afterDiscountPerUser: adpu,
+              totalRs
+            });
+          }
+        });
+        if (!anySelected) {
+          alert("Please select at least one CX module or 'All Modules'.");
+        }
+      }
+    } else {
+      alert("Please enter a valid CX user count.");
+    }
+  }
+
+  // ----- EX Journey -----
+  let exAll = false;
+  if (exEnabled) {
+    const exUserCount = parseInt(document.getElementById("exUserCount").value) || 0;
+    exAll = document.getElementById("exAllModules").checked;
+    if (exUserCount > 0) {
+      if (exAll) {
+        const basePerUser = pricing.EX["All Modules"];
+        // Apply discount
+        const discountRate = getDiscountRateCXEX(exUserCount);
+        const costBeforeDiscount = basePerUser * exUserCount;
+        const discountAmount = costBeforeDiscount * discountRate;
+        const totalRs = costBeforeDiscount - discountAmount;
+
+        grandTotalRs += totalRs;
+        exSubtotal += totalRs;
+
+        const adpu = exUserCount > 0 ? Math.round(totalRs / exUserCount) : 0;
+
+        quoteRows.push({
+          journey: "EX",
+          module: "All Modules",
+          users: exUserCount,
+          price: basePerUser,
+          discountInfo: (discountRate * 100).toFixed(0) + "% off",
+          afterDiscountPerUser: adpu,
+          totalRs
+        });
+      } else {
+        const exModuleCbs = document.getElementsByName("exModule");
+        let anySelected = false;
+        exModuleCbs.forEach(cb => {
+          if (cb.checked) {
+            anySelected = true;
+            const basePerUser = pricing.EX[cb.value];
+            // Apply discount
+            const discountRate = getDiscountRateCXEX(exUserCount);
+            const costBeforeDiscount = basePerUser * exUserCount;
+            const discountAmount = costBeforeDiscount * discountRate;
+            const totalRs = costBeforeDiscount - discountAmount;
+
+            grandTotalRs += totalRs;
+            exSubtotal += totalRs;
+
+            const adpu = exUserCount > 0 ? Math.round(totalRs / exUserCount) : 0;
+
+            quoteRows.push({
+              journey: "EX",
+              module: cb.value,
+              users: exUserCount,
+              price: basePerUser,
+              discountInfo: (discountRate * 100).toFixed(0) + "% off",
+              afterDiscountPerUser: adpu,
+              totalRs
+            });
+          }
+        });
+        if (!anySelected) {
+          alert("Please select at least one EX module or 'All Modules'.");
+        }
+      }
+    } else {
+      alert("Please enter a valid EX user count.");
+    }
+  }
+
+  // ----- AX Journey -----
+  if (axEnabled) {
+    const axUserCount = parseInt(document.getElementById("axUserCount").value) || 0;
+    if (axUserCount > 0) {
+      // AX is only sold as "All Modules"
+      const axRate = getAXRate(axUserCount);
+      let totalRs = axRate * axUserCount;
+      // Minimum commitment
+      if (totalRs < 500000) {
+        totalRs = 500000;
+      }
+
+      const adpu = axUserCount > 0 ? Math.round(totalRs / axUserCount) : 0;
+
+      quoteRows.push({
+        journey: "AX",
+        module: "All Modules",
+        users: axUserCount,
+        price: axRate,
+        discountInfo: "Tier-based, min ₹500,000",
+        afterDiscountPerUser: adpu,
+        totalRs
+      });
+      grandTotalRs += totalRs;
+    } else {
+      alert("Please enter a valid AX user count.");
+    }
+  }
+
+  // ----- BUNDLE DISCOUNT for CX + EX All Modules -----
+  if (cxEnabled && exEnabled && cxAll && exAll) {
+    const combined = cxSubtotal + exSubtotal;
+    if (combined > 0) {
+      const bundleDiscountRate = 0.166666; // 16.6666%
+      const bundleDiscount = combined * bundleDiscountRate;
+      grandTotalRs -= bundleDiscount;
+
+      // Add a negative row to reflect the discount
+      quoteRows.push({
+        journey: "Bundle Discount",
+        module: "CX + EX (All Modules)",
+        users: "",
+        price: "",
+        discountInfo: "Extra 16.6666% off",
+        afterDiscountPerUser: "",
+        totalRs: -bundleDiscount
+      });
+    }
+  }
+
+  // Render final quote table
+  if (quoteRows.length === 0) {
+    document.getElementById("quoteTable").classList.add("hidden");
+    return;
+  }
+
+  const quoteBody = document.getElementById("quoteBody");
+  quoteBody.innerHTML = ""; // Clear previous rows
+
+  quoteRows.forEach(row => {
+    const tr = document.createElement("tr");
+
+    // Journey
+    const tdJourney = document.createElement("td");
+    tdJourney.textContent = row.journey;
+    tr.appendChild(tdJourney);
+
+    // Module
+    const tdModule = document.createElement("td");
+    tdModule.textContent = row.module;
+    tr.appendChild(tdModule);
+
+    // # of Users
+    const tdUsers = document.createElement("td");
+    tdUsers.classList.add("numeric-col");
+    tdUsers.textContent = row.users ? parseInt(row.users, 10).toLocaleString() : "";
+    tr.appendChild(tdUsers);
+
+    // Price (per user)
+    const tdPrice = document.createElement("td");
+    tdPrice.classList.add("numeric-col");
+    if (row.price !== "" && row.price !== undefined && row.price !== null) {
+      tdPrice.textContent = "₹" + parseInt(row.price, 10).toLocaleString();
+    } else {
+      tdPrice.textContent = "";
+    }
+    tr.appendChild(tdPrice);
+
+    // Discount / Tier Info
+    const tdDiscount = document.createElement("td");
+    tdDiscount.textContent = row.discountInfo || "";
+    tr.appendChild(tdDiscount);
+
+    // After Discount (per user)
+    const tdAfterDiscount = document.createElement("td");
+    tdAfterDiscount.classList.add("numeric-col");
+    if (row.afterDiscountPerUser !== "" && typeof row.afterDiscountPerUser === "number") {
+      tdAfterDiscount.textContent = "₹" + parseInt(row.afterDiscountPerUser, 10).toLocaleString();
+    } else {
+      tdAfterDiscount.textContent = "";
+    }
+    tr.appendChild(tdAfterDiscount);
+
+    // Investment (₹)
+    const tdTotalRs = document.createElement("td");
+    tdTotalRs.classList.add("numeric-col");
+    const roundedTotalRs = Math.round(row.totalRs);
+    tdTotalRs.textContent = "₹" + roundedTotalRs.toLocaleString();
+    tr.appendChild(tdTotalRs);
+
+    // Investment ($)
+    const tdTotalUsd = document.createElement("td");
+    tdTotalUsd.classList.add("numeric-col");
+    const usdValue = Math.round(roundedTotalRs / INR_TO_USD);
+    tdTotalUsd.textContent = "$" + usdValue.toLocaleString();
+    tr.appendChild(tdTotalUsd);
+
+    quoteBody.appendChild(tr);
+  });
+
+  // Round the grand total to an integer
+  grandTotalRs = Math.round(grandTotalRs);
+
+  // Update the totals in the footer
+  document.getElementById("totalRs").textContent = "₹" + grandTotalRs.toLocaleString();
+  document.getElementById("totalUsd").textContent = "$" + Math.round(grandTotalRs / INR_TO_USD).toLocaleString();
+
+  document.getElementById("quoteTable").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
+
